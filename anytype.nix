@@ -65,8 +65,6 @@ buildNpmPackage {
   '';
 
   installPhase = ''
-    find dist
-    ls -la dist/linux-unpacked/resources/
     mkdir -p $out/bin $out/share/applications
     mv dist/linux-unpacked/resources/app.asar $out/share
     mv dist/linux-unpacked/resources/app.asar.unpacked $out/share
