@@ -54,6 +54,12 @@ buildNpmPackage {
 
   preBuild = ''
     npm exec electron-builder install-app-deps
+
+    # prevent intermediate build artifacts from making it into the output and bloating the closure
+    mv node_modules/keytar/build/Release/keytar.node keytar.node
+    rm -rf node_modules/keytar/build
+    mkdir -p node_modules/keytar/build/Release
+    mv keytar.node node_modules/keytar/build/Release
   '';
 
   postBuild = ''
