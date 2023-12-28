@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=Anytype
+Comment=Anytype
+Exec=anytype %U
+StartupWMClass=Anytype
+Terminal=false
+Type=Application
+Icon=anytype
+MimeType=x-scheme-handler/anytype;
+Categories=Utility;
+
