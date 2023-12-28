@@ -1,0 +1,70 @@
+From 085e7e84251b12769e2314e75f061063faaa49e4 Mon Sep 17 00:00:00 2001
+From: squalus <squalus@squalus.net>
+Date: Thu, 28 Dec 2023 14:46:09 -0800
+Subject: [PATCH] remove amplitide analytics
+
+---
+ src/ts/lib/analytics.ts | 28 +++-------------------------
+ 1 file changed, 3 insertions(+), 25 deletions(-)
+
+diff --git a/src/ts/lib/analytics.ts b/src/ts/lib/analytics.ts
+index 60960b91e..a1567689d 100644
+--- a/src/ts/lib/analytics.ts
++++ b/src/ts/lib/analytics.ts
+@@ -12,7 +12,7 @@ const KEYS = [
+ ];
+ const KEY_CONTEXT = 'analyticsContext';
+ const KEY_ORIGINAL_ID = 'analyticsOriginalId';
+-const URL = 'amplitude.anytype.io';
++const URL = '127.0.0.1';
+ 
+ class Analytics {
+ 	
+@@ -24,8 +24,7 @@ class Analytics {
+ 	};
+ 
+ 	isAllowed (): boolean {
+-		const { config } = commonStore;
+-		return !(config.sudo || [ 'alpha', 'beta' ].includes(config.channel) || !window.Electron.isPackaged) || this.debug();
++		return false;
+ 	};
+ 	
+ 	init () {
+@@ -49,27 +48,6 @@ class Analytics {
+ 
+ 		C.MetricsSetParameters(platform, version.join('-'));
+ 
+-		this.instance = amplitude.getInstance();
+-		this.instance.init(Constant.amplitude, null, {
+-			apiEndpoint: URL,
+-			batchEvents: true,
+-			saveEvents: true,
+-			includeUtm: true,
+-			includeReferrer: true,
+-			platform,
+-			trackingOptions: {
+-    			ipAddress: false,
+-			},
+-		});
+-
+-		this.instance.setVersionName(window.Electron.version.app);
+-		this.instance.setUserProperties({ 
+-			deviceType: 'Desktop',
+-			platform,
+-			osVersion: window.Electron.version.os,
+-			interfaceLang,
+-		});
+-
+ 		this.removeContext();
+ 		this.log('[Analytics].init');
+ 	};
+@@ -504,4 +482,4 @@ class Analytics {
+ 
+ };
+ 
+- export const analytics: Analytics = new Analytics();
+\ No newline at end of file
++ export const analytics: Analytics = new Analytics();
+-- 
+2.42.0
+

@@ -38,6 +38,9 @@ buildNpmPackage {
 
   inherit npmDeps npmDepsHash;
 
+  patches = [
+    ./0001-remove-amplitide-analytics.patch
+  ];
   postPatch = ''
     cp ${npmDeps}/package-lock.json package-lock.json
     cp -r ${anytype-protos-js}/protobuf/* dist/lib
