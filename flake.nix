@@ -49,24 +49,30 @@
         version = anytype-heart-version;
       };
       fix-lockfile = callPackage ./fix-lockfile.nix {};
+      anytype = callPackage ./anytype.nix {
+        inherit anytype-ts-version anytype-heart anytype-protos-js fix-lockfile;
+        anytype-ts-src = anytype-ts;
+        anytype-l10n-src = anytype-l10n;
+        electron = electron_25;
+      };
     in
 
     rec {
       packages = flake-utils.lib.flattenTree {
 
-        inherit anytype-heart anytype-protos-js fix-lockfile;
+        inherit anytype anytype-heart anytype-protos-js fix-lockfile;
 
-        anytype = callPackage ./anytype.nix {
-          inherit anytype-ts-version anytype-heart anytype-protos-js fix-lockfile;
-          anytype-ts-src = anytype-ts;
-          anytype-l10n-src = anytype-l10n;
-          electron = electron_25;
-        };
+        default = anytype;
+
         anytype-test = nixosTest (import ./test.nix { inherit self; });
 
       };
       checks = flake-utils.lib.flattenTree {
         inherit (packages) anytype-test;
+      };
+      apps.default = {
+        type = "app";
+        program = "${self.packages.${system}.default}/bin/anytype";
       };
 
       devShells.default = mkShell {
