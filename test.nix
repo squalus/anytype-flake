@@ -15,6 +15,7 @@
 
   testScript = ''
     machine.wait_for_x()
+    machine.wait_until_succeeds("xwininfo -root -tree")
     machine.execute(
       "anytype --no-sandbox >&2 &"
     )
