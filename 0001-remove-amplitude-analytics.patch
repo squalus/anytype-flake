@@ -1,7 +1,7 @@
-From 085e7e84251b12769e2314e75f061063faaa49e4 Mon Sep 17 00:00:00 2001
+From 9999dc5214b17bc854f3dc648d4d9548d08575b0 Mon Sep 17 00:00:00 2001
 From: squalus <squalus@squalus.net>
 Date: Thu, 28 Dec 2023 14:46:09 -0800
-Subject: [PATCH] remove amplitide analytics
+Subject: [PATCH] remove amplitude analytics
 
 ---
  src/ts/lib/analytics.ts | 28 +++-------------------------

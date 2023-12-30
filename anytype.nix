@@ -39,7 +39,7 @@ buildNpmPackage {
   inherit npmDeps npmDepsHash;
 
   patches = [
-    ./0001-remove-amplitide-analytics.patch
+    ./0001-remove-amplitude-analytics.patch
   ];
   postPatch = ''
     cp ${npmDeps}/package-lock.json package-lock.json
