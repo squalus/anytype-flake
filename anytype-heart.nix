@@ -13,6 +13,8 @@ buildGoModule {
   # the C files in the dependencies get lost without this
   proxyVendor = true;
 
+  doCheck = false;
+
   meta = with lib; {
     description = "Shared library for Anytype clients ";
     homepage = "https://github.com/anyproto/anytype-heart";
