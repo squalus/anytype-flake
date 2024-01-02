@@ -31,17 +31,17 @@
     with pkgs;
 
     let
-      anytype-ts-src = callPackage ./anytype-ts-src.nix {};
-      anytype-heart-src = callPackage ./anytype-heart-src.nix {};
-      anytype-heart-bin = callPackage ./anytype-heart-bin.nix {};
-      anytype-heart = callPackage ./anytype-heart.nix {
+      anytype-ts-src = callPackage ./anytype/src.nix {};
+      anytype-heart-src = callPackage ./anytype-heart/src.nix {};
+      anytype-heart-bin = callPackage ./anytype-heart/bin.nix {};
+      anytype-heart = callPackage ./anytype-heart {
         inherit anytype-heart-src;
       };
-      anytype-protos-js = callPackage ./anytype-protos-js.nix {
+      anytype-protos-js = callPackage ./anytype-protos-js {
         inherit anytype-heart-bin;
       };
-      fix-lockfile = callPackage ./fix-lockfile.nix {};
-      anytype = callPackage ./anytype.nix {
+      fix-lockfile = callPackage ./fix-lockfile {};
+      anytype = callPackage ./anytype {
         inherit anytype-ts-src anytype-heart anytype-protos-js fix-lockfile;
         anytype-l10n-src = anytype-l10n;
         electron = electron_25;
@@ -55,7 +55,7 @@
 
         default = anytype;
 
-        anytype-test = nixosTest (import ./test.nix { inherit self; });
+        anytype-test = nixosTest (import ./anytype/test.nix { inherit self; });
 
         anytype-flake-update = haskellPackages.callPackage ./update {};
 

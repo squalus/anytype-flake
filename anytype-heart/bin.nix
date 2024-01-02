@@ -1,6 +1,6 @@
 { fetchurl }:
 let
-  lockfile = builtins.fromJSON (builtins.readFile ./anytype-heart-bin.json);
+  lockfile = builtins.fromJSON (builtins.readFile ./bin.json);
   src = fetchurl {
     inherit (lockfile) url hash;
   };

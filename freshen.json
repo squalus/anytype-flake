@@ -15,7 +15,7 @@
       "inputs": [ "anytype-l10n" ],
       "derived_hashes": [{
         "attr_path": "anytype.depsUpdate",
-        "filename": "anytype-ts-deps.json",
+        "filename": "anytype/deps.json",
         "run_mode": "always"
       }],
       "tests": [{

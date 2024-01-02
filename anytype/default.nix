@@ -8,7 +8,7 @@ let
 
   version = anytype-ts-src.version;
 
-  npmDepsHash = builtins.fromJSON (builtins.readFile ./anytype-ts-deps.json);
+  npmDepsHash = builtins.fromJSON (builtins.readFile ./deps.json);
 
   npmDepsWithHash = hash: fetchNpmDeps {
     inherit hash;

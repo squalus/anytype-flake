@@ -1,9 +1,9 @@
 { fetchFromGitHub }:
 let
-  lockfile = builtins.fromJSON (builtins.readFile ./anytype-ts-src.json);
+  lockfile = builtins.fromJSON (builtins.readFile ./src.json);
   src = fetchFromGitHub {
     owner = "anyproto";
-    repo = "anytype-ts";
+    repo = "anytype-heart";
     inherit (lockfile) rev hash;
   };
 in

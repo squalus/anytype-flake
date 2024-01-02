@@ -193,9 +193,9 @@ updateGithubLockfile owner repo rev path = do
 runUpdate :: UpdateConfig -> IO ()
 runUpdate c = do
   flakeRoot <- maybe getCurrentDirectory pure (updateConfigFlakeRoot c)
-  let heartBinaryLockfilePath = flakeRoot </> "anytype-heart-bin.json"
-      heartLockfilePath = flakeRoot </> "anytype-heart-src.json"
-      tsLockfilePath = flakeRoot </> "anytype-ts-src.json"
+  let heartBinaryLockfilePath = flakeRoot </> "anytype-heart/bin.json"
+      heartLockfilePath = flakeRoot </> "anytype-heart/src.json"
+      tsLockfilePath = flakeRoot </> "anytype/src.json"
   prevHeartBinaryLockfile <- readJSON heartBinaryLockfilePath
   tsRelease <-
     getLatestRelease "anyproto" "anytype-ts" >>= \case
