@@ -15,6 +15,8 @@ buildGoModule {
 
   doCheck = false;
 
+  patches = [ ./0001-remove-amplitude-analytics.patch ];
+
   meta = with lib; {
     description = "Shared library for Anytype clients ";
     homepage = "https://github.com/anyproto/anytype-heart";

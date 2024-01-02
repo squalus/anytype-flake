@@ -1,0 +1,33 @@
+From b5d95baf90ab42fdd936c5f408b3662587153eb8 Mon Sep 17 00:00:00 2001
+From: squalus <squalus@squalus.net>
+Date: Mon, 1 Jan 2024 16:46:47 -0800
+Subject: [PATCH] remove amplitude analytics
+
+---
+ metrics/amplitude/client.go | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/metrics/amplitude/client.go b/metrics/amplitude/client.go
+index e3697d2fb..3c04718df 100644
+--- a/metrics/amplitude/client.go
++++ b/metrics/amplitude/client.go
+@@ -8,7 +8,7 @@ import (
+ 	"time"
+ )
+ 
+-const eventEndpoint = "https://amplitude.anytype.io/2/httpapi"
++const eventEndpoint = "https://127.0.0.1:61234"
+ 
+ // Client manages the communication to the Amplitude API
+ type Client struct {
+@@ -55,6 +55,7 @@ func (c *Client) SetClient(client *http.Client) {
+ }
+ 
+ func (c *Client) Events(events []Event) error {
++	return nil
+ 	req := EventRequest{
+ 		APIKey: c.key,
+ 		Events: events,
+-- 
+2.42.0
+
