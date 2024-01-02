@@ -1,0 +1,40 @@
+{
+  "update_tasks": [
+    {
+      "name": "anytype-flake-update",
+      "update_scripts": [{
+        "attr_path": "anytype-flake-update",
+        "executable": "bin/anytype-flake-update",
+        "args": ["update"],
+        "run_mode": "always"
+      }]
+    },
+    {
+      "name": "anytype",
+      "attr_path": "anytype",
+      "inputs": [ "anytype-l10n" ],
+      "derived_hashes": [{
+        "attr_path": "anytype.depsUpdate",
+        "filename": "anytype-ts-deps.json",
+        "run_mode": "always"
+      }],
+      "tests": [{
+        "attr_path": "anytype-test"
+      }],
+      "required_update_tasks": [ "anytype-flake-update" ]
+    },
+    {
+      "name": "nixpkgs",
+      "inputs": [
+        "nixpkgs"
+      ],
+      "tests": [
+        { "attr_path": "anytype-test"
+        },
+        { "attr_path": "anytype-flake-update"
+        }
+      ]
+    }
+  ]
+}
+

@@ -1,10 +1,10 @@
-{ src, version, lib, fetchFromGitHub, buildGoModule }:
+{ src, lib, fetchFromGitHub, buildGoModule, anytype-heart-src }:
 
 buildGoModule {
 
-  name = "anytype-heart-${version}";
+  name = "anytype-heart-${anytype-heart-src.version}";
 
-  inherit src version;
+  inherit (anytype-heart-src) src version;
 
   vendorHash = "sha256-Y+uzURihYKQmow7lT9ct5/ZlyZeWOCQkts+c1IIdrf0=";
 

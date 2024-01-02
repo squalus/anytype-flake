@@ -1,22 +1,5 @@
 {
   "nodes": {
-    "anytype-heart-src": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1703686493,
-        "narHash": "sha256-TMNDbvtBCiSYlg8/pYTOBduamRPEDmIPv8b89oFMO50=",
-        "owner": "anyproto",
-        "repo": "anytype-heart",
-        "rev": "a6b9e08d3091e8a9c17b0b50e3d591612d609bd5",
-        "type": "github"
-      },
-      "original": {
-        "owner": "anyproto",
-        "ref": "v0.30.4",
-        "repo": "anytype-heart",
-        "type": "github"
-      }
-    },
     "anytype-l10n": {
       "flake": false,
       "locked": {
@@ -30,23 +13,6 @@
       "original": {
         "owner": "anyproto",
         "repo": "l10n-anytype-ts",
-        "type": "github"
-      }
-    },
-    "anytype-ts": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1703719672,
-        "narHash": "sha256-WBwIOstQyMu3If/nxPd8fkPdZmzhmYi7kMZSVpTkogM=",
-        "owner": "anyproto",
-        "repo": "anytype-ts",
-        "rev": "657f440a4d1b8e1c0a35e1899b9e3cc489369a36",
-        "type": "github"
-      },
-      "original": {
-        "owner": "anyproto",
-        "ref": "v0.37.3",
-        "repo": "anytype-ts",
         "type": "github"
       }
     },
@@ -87,9 +53,7 @@
     },
     "root": {
       "inputs": {
-        "anytype-heart-src": "anytype-heart-src",
         "anytype-l10n": "anytype-l10n",
-        "anytype-ts": "anytype-ts",
         "flake-utils": "flake-utils",
         "nixpkgs": "nixpkgs",
         "systems": "systems"

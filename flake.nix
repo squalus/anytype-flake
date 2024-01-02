@@ -9,21 +9,13 @@
       url = "flake:flake-utils";
       inputs.systems.follows = "systems";
     };
-    anytype-ts = {
-      url = "github:anyproto/anytype-ts?ref=v0.37.3";
-      flake = false;
-    };
     anytype-l10n = {
       url = "github:anyproto/l10n-anytype-ts";
       flake = false;
     };
-    anytype-heart-src = {
-      url = "github:anyproto/anytype-heart?ref=v0.30.4";
-      flake = false;
-    };
   };
 
-  outputs = inputs@{ self, nixpkgs, flake-utils, anytype-ts, anytype-l10n, anytype-heart-src, ... }:
+  outputs = inputs@{ self, nixpkgs, flake-utils, anytype-l10n, ... }:
   flake-utils.lib.eachDefaultSystem (system:
 
     let
@@ -39,19 +31,18 @@
     with pkgs;
 
     let
-      anytype-heart-version = "0.30.4";
-      anytype-ts-version = "0.37.3";
+      anytype-ts-src = callPackage ./anytype-ts-src.nix {};
+      anytype-heart-src = callPackage ./anytype-heart-src.nix {};
+      anytype-heart-bin = callPackage ./anytype-heart-bin.nix {};
       anytype-heart = callPackage ./anytype-heart.nix {
-        src = anytype-heart-src;
-        version = anytype-heart-version;
+        inherit anytype-heart-src;
       };
       anytype-protos-js = callPackage ./anytype-protos-js.nix {
-        version = anytype-heart-version;
+        inherit anytype-heart-bin;
       };
       fix-lockfile = callPackage ./fix-lockfile.nix {};
       anytype = callPackage ./anytype.nix {
-        inherit anytype-ts-version anytype-heart anytype-protos-js fix-lockfile;
-        anytype-ts-src = anytype-ts;
+        inherit anytype-ts-src anytype-heart anytype-protos-js fix-lockfile;
         anytype-l10n-src = anytype-l10n;
         electron = electron_25;
       };
@@ -66,18 +57,38 @@
 
         anytype-test = nixosTest (import ./test.nix { inherit self; });
 
+        anytype-flake-update = haskellPackages.callPackage ./update {};
+
       };
       checks = flake-utils.lib.flattenTree {
-        inherit (packages) anytype-test;
+        inherit (packages) anytype-test anytype-flake-update;
       };
       apps.default = {
         type = "app";
         program = "${self.packages.${system}.default}/bin/anytype";
       };
 
-      devShells.default = mkShell {
+      devShells.default =
+      mkShell {
         name = "package-update";
+        inputsFrom = [
+          packages.anytype-flake-update.env
+        ];
         nativeBuildInputs = [
+          haskell-language-server
+          (pkgs.stdenv.mkDerivation {
+              name = "hls-link";
+              dontUnpack = true;
+              dontBuild = true;
+              installPhase = ''
+                mkdir -p $out/bin
+                ln -s ${haskell-language-server}/bin/haskell-language-server-wrapper $out/bin/haskell-language-server
+              '';
+           })
+          cabal-install
+          cabal2nix
+          haskellPackages.fourmolu
+          nix-prefetch-github
           nodejs
           prefetch-npm-deps
         ];

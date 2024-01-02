@@ -1,4 +1,4 @@
-{ anytype-ts-src, anytype-ts-version, anytype-l10n-src, anytype-heart, anytype-protos-js, fix-lockfile
+{ anytype-ts-src, anytype-l10n-src, anytype-heart, anytype-protos-js, fix-lockfile
 , lib, fetchFromGitHub, fetchurl, makeWrapper, buildNpmPackage, fetchNpmDeps
 , pkg-config, libsecret, electron, libglvnd }:
 
@@ -6,14 +6,15 @@ let
 
   pname = "anytype";
 
-  version = anytype-ts-version;
+  version = anytype-ts-src.version;
 
-  npmDepsHash = "sha256-tJjDbit9XhwlHy6EF2YVwJAIyOxZj9vvXTS3qh+sAag=";
+  npmDepsHash = builtins.fromJSON (builtins.readFile ./anytype-ts-deps.json);
 
-  npmDeps = fetchNpmDeps {
+  npmDepsWithHash = hash: fetchNpmDeps {
+    inherit hash;
+    inherit (anytype-ts-src) src;
     forceGitDeps = false;
     forceEmptyCache = false;
-    src = anytype-ts-src;
     srcs = null;
     sourceRoot = null;
     prePatch = "";
@@ -23,16 +24,17 @@ let
       ${fix-lockfile}/bin/fix-lockfile.py package-lock.json package-lock.json
     '';
     name = "${pname}-npm-deps";
-    hash = npmDepsHash;
   };
+
+  npmDeps = npmDepsWithHash npmDepsHash;
 
 in
 
 buildNpmPackage {
 
-  name = "${pname}-${version}";
+  name = "${pname}-${anytype-ts-src.version}";
 
-  src = anytype-ts-src;
+  inherit (anytype-ts-src) src;
 
   npmFlags = [ "--ignore-scripts" ];
 
@@ -97,5 +99,6 @@ buildNpmPackage {
 
   passthru = {
     inherit npmDeps;
+    depsUpdate = npmDepsWithHash lib.fakeHash;
   };
 }

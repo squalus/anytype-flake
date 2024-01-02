@@ -1,0 +1,35 @@
+cabal-version:      3.0
+name:               anytype-flake-update
+version:            0.1.0.0
+license:            0BSD
+build-type:         Simple
+common warnings
+    ghc-options: -Wall
+
+executable anytype-flake-update
+    import: warnings
+    main-is: Main.hs
+    other-modules: Prefetch
+    build-depends: base
+                 , aeson
+                 , base64
+                 , bytestring
+                 , casing
+                 , conduit
+                 , conduit-extra
+                 , containers
+                 , cryptohash-md5
+                 , cryptohash-sha256
+                 , directory
+                 , filepath
+                 , github
+                 , http-conduit
+                 , http-types
+                 , optparse-applicative
+                 , text
+                 , typed-process
+                 , vector
+    hs-source-dirs:   .
+    default-extensions: LambdaCase
+                      , OverloadedStrings
+    default-language: GHC2021
