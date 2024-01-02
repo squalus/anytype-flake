@@ -33,12 +33,12 @@
     let
       anytype-ts-src = callPackage ./anytype/src.nix {};
       anytype-heart-src = callPackage ./anytype-heart/src.nix {};
-      anytype-heart-bin = callPackage ./anytype-heart/bin.nix {};
+      protoc-gen-js = callPackage ./protoc-gen-js {};
       anytype-heart = callPackage ./anytype-heart {
         inherit anytype-heart-src;
       };
       anytype-protos-js = callPackage ./anytype-protos-js {
-        inherit anytype-heart-bin;
+        inherit anytype-heart-src protoc-gen-js;
       };
       fix-lockfile = callPackage ./fix-lockfile {};
       anytype = callPackage ./anytype {
@@ -51,7 +51,7 @@
     rec {
       packages = flake-utils.lib.flattenTree {
 
-        inherit anytype anytype-heart anytype-protos-js fix-lockfile;
+        inherit anytype anytype-heart anytype-protos-js fix-lockfile protoc-gen-js;
 
         default = anytype;
 

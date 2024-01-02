@@ -1,19 +1,21 @@
-# pull the generated protobuf code from the binary release package
-# TODO - generate these from scratch
 { lib
 , stdenvNoCC
-, anytype-heart-bin
+, anytype-heart-src
+, protoc-gen-js
+, protoc-gen-grpc-web
+, protobuf
 }:
 stdenvNoCC.mkDerivation {
-  name = "anytype-protos-js-${anytype-heart-bin.version}";
-  inherit (anytype-heart-bin) src version;
-  unpackPhase = ''
-    tar xvf $src
-  '';
-  dontBuild = true;
+  name = "anytype-protos-js-${anytype-heart-src.version}";
+  inherit (anytype-heart-src) src version;
+  nativeBuildInputs = [ protoc-gen-grpc-web protoc-gen-js protobuf ];
+  makeFlags = "protos-js";
   installPhase = ''
-    mkdir $out
-    mv protobuf json $out
+    mkdir -p $out/{protobuf,json}
+    cp -r dist/js/pb/* $out/protobuf
+    cp -r dist/js/pb/pkg/lib/* $out/protobuf
+    cp pkg/lib/bundle/system*.json $out/json
+    cp pkg/lib/bundle/internal*.json $out/json
   '';
 
    meta = with lib; {

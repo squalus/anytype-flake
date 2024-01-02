@@ -1,8 +1,6 @@
 module Main where
 
 import Control.Exception
-import Data.ByteString (ByteString)
-import Data.ByteString.Base64 (encodeBase64)
 import Data.Text (Text)
 import Data.Text.Encoding.Base64 (decodeBase64)
 import Data.Vector (Vector)
@@ -105,30 +103,6 @@ heartReleaseByTag tag = do
     Left x -> fail ("Error fetching anytype-heart release: " <> show x)
     Right x -> pure x
 
-getHeartReleaseAsset :: Text -> IO (GitHub.Release, GitHub.ReleaseAsset)
-getHeartReleaseAsset heartTag = do
-  release <- heartReleaseByTag heartTag
-  case getHeartBinaryAsset release of
-    Nothing -> fail "Couldn't find release asset in anytype-heart"
-    Just x -> pure (release, x)
-
-getHeartBinaryAsset :: GitHub.Release -> Maybe GitHub.ReleaseAsset
-getHeartBinaryAsset release =
-  let
-    expectedName = mconcat ["js_", GitHub.releaseTagName release, "_linux-amd64.tar.gz"]
-  in
-    firstMatch (\asset -> GitHub.releaseAssetName asset == expectedName) (GitHub.releaseAssets release)
-
-encodeSha256 :: ByteString -> Text
-encodeSha256 bs = "sha256-" <> encodeBase64 bs
-
-data FetchurlLockfile = FetchurlLockfile
-  { fetchurlLockfileURL :: !Text
-  , fetchurlLockfileHash :: !Text
-  , fetchurlLockfileVersion :: !Text
-  }
-  deriving (Show, Eq, Generic)
-
 data GithubLockfile = GithubLockfile
   { githubLockfileRev :: !Text
   , githubLockfileHash :: !Text
@@ -141,12 +115,6 @@ defaultLabels = Text.Casing.toQuietSnake . Text.Casing.dropPrefix . Text.Casing.
 
 localOptions :: Data.Aeson.Options
 localOptions = Data.Aeson.defaultOptions{Data.Aeson.fieldLabelModifier = defaultLabels}
-
-instance Data.Aeson.FromJSON FetchurlLockfile where
-  parseJSON = Data.Aeson.genericParseJSON localOptions
-
-instance Data.Aeson.ToJSON FetchurlLockfile where
-  toEncoding = Data.Aeson.genericToEncoding localOptions
 
 instance Data.Aeson.FromJSON GithubLockfile where
   parseJSON = Data.Aeson.genericParseJSON localOptions
@@ -193,10 +161,8 @@ updateGithubLockfile owner repo rev path = do
 runUpdate :: UpdateConfig -> IO ()
 runUpdate c = do
   flakeRoot <- maybe getCurrentDirectory pure (updateConfigFlakeRoot c)
-  let heartBinaryLockfilePath = flakeRoot </> "anytype-heart/bin.json"
-      heartLockfilePath = flakeRoot </> "anytype-heart/src.json"
+  let heartLockfilePath = flakeRoot </> "anytype-heart/src.json"
       tsLockfilePath = flakeRoot </> "anytype/src.json"
-  prevHeartBinaryLockfile <- readJSON heartBinaryLockfilePath
   tsRelease <-
     getLatestRelease "anyproto" "anytype-ts" >>= \case
       Nothing -> fail "Error finding latest stable anytype-ts release"
@@ -207,30 +173,6 @@ runUpdate c = do
   Data.Text.IO.putStrLn $ mconcat ["anytype-ts middleware.version: ", middlewareVersion]
   let heartTag = "v" <> middlewareVersion
   Data.Text.IO.putStrLn $ mconcat ["anytype-heart tag: ", heartTag]
-  if (fetchurlLockfileVersion <$> prevHeartBinaryLockfile) == Just heartTag
-    then putStrLn "anytype-heart binary version matches lockfile"
-    else putStrLn "anytype-heart binary version does not match lockfile"
-
-  (_, heartReleaseAsset) <- getHeartReleaseAsset heartTag
-
-  putStrLn "Downloading heart binary release asset..."
-  prefetch <- Prefetch.prefetchGithubReleaseAsset heartReleaseAsset
-  putStrLn "Downloading heart binary release asset...done"
-  Data.Text.IO.putStrLn $ mconcat ["anytype-heart binary url: ", Prefetch.fetchurlResultURL prefetch]
-  Data.Text.IO.putStrLn $ mconcat ["anytype-heart binary hash: ", Prefetch.fetchurlResultHash prefetch]
-  let nextHeartBinaryLockfile =
-        FetchurlLockfile
-          { fetchurlLockfileHash = Prefetch.fetchurlResultHash prefetch
-          , fetchurlLockfileURL = Prefetch.fetchurlResultURL prefetch
-          , fetchurlLockfileVersion = heartTag
-          }
-  if prevHeartBinaryLockfile == Just nextHeartBinaryLockfile
-    then putStrLn "anytype-heart binary lockfile matches"
-    else do
-      putStrLn "anytype-heart binary lockfile does not match"
-      putStrLn $ mconcat ["Writing ", heartBinaryLockfilePath, "..."]
-      Data.Aeson.encodeFile heartBinaryLockfilePath nextHeartBinaryLockfile
-      putStrLn $ mconcat ["Writing ", heartBinaryLockfilePath, "...done"]
 
   updateGithubLockfile "anyproto" "anytype-ts" tsTag tsLockfilePath
   updateGithubLockfile "anyproto" "anytype-heart" heartTag heartLockfilePath
