@@ -1,6 +1,7 @@
 { anytype-ts-src, anytype-l10n-src, anytype-heart, anytype-protos-js, fix-lockfile
+, remove-telemetry-deps
 , lib, fetchFromGitHub, fetchurl, makeWrapper, buildNpmPackage, fetchNpmDeps
-, pkg-config, libsecret, electron, libglvnd }:
+, pkg-config, libsecret, electron, libglvnd, jq, moreutils, stdenvNoCC }:
 
 let
 
@@ -10,41 +11,44 @@ let
 
   npmDepsHash = builtins.fromJSON (builtins.readFile ./deps.json);
 
-  npmDepsWithHash = hash: fetchNpmDeps {
-    inherit hash;
-    inherit (anytype-ts-src) src;
-    forceGitDeps = false;
-    forceEmptyCache = false;
-    srcs = null;
-    sourceRoot = null;
-    prePatch = "";
-    patches = [];
-    postPatch = ''
+  srcPatchedHash = builtins.fromJSON (builtins.readFile ./src-patched.json);
+
+  mkSrcPatched = hash: stdenvNoCC.mkDerivation {
+    name = "anytype-ts-src-patched-${anytype-ts-src.version}";
+    src = anytype-ts-src.src;
+    dontBuild = true;
+    dontFixup = true;
+    installPhase = ''
+      mkdir $out
+      cp -r . $out
+      ${remove-telemetry-deps}/bin/remove-telemetry-deps.py $out
       # this connects to the internet and fetches missing hashes
-      ${fix-lockfile}/bin/fix-lockfile.py package-lock.json package-lock.json
+      ${fix-lockfile}/bin/fix-lockfile.py $out/package-lock.json $out/package-lock.json
     '';
-    name = "${pname}-npm-deps";
+    outputHash = hash;
+    outputHashMode = "recursive";
   };
 
-  npmDeps = npmDepsWithHash npmDepsHash;
+  srcPatched = mkSrcPatched srcPatchedHash;
 
 in
 
-buildNpmPackage {
+let mkPackage =
+npmDepsHash: buildNpmPackage {
 
   name = "${pname}-${anytype-ts-src.version}";
 
-  inherit (anytype-ts-src) src;
+  src = srcPatched;
 
   npmFlags = [ "--ignore-scripts" ];
 
-  inherit npmDeps npmDepsHash;
+  inherit npmDepsHash;
 
   patches = [
-    ./0001-remove-amplitude-analytics.patch
+    ./0001-remove-analytics.patch
   ];
+
   postPatch = ''
-    cp ${npmDeps}/package-lock.json package-lock.json
     cp -r ${anytype-protos-js}/protobuf/* dist/lib
     mkdir -p dist/lib/json/generated
     cp -r ${anytype-protos-js}/json/* dist/lib/json/generated
@@ -68,11 +72,10 @@ buildNpmPackage {
   '';
 
   postBuild = ''
-    ELECTRON_SKIP_SENTRY=1 \
-      npm exec electron-builder -- \
-        --dir \
-        -c.electronDist=${electron}/libexec/electron \
-        -c.electronVersion=${electron.version}
+    npm exec electron-builder -- \
+      --dir \
+      -c.electronDist=${electron}/libexec/electron \
+      -c.electronVersion=${electron.version}
   '';
 
   installPhase = ''
@@ -96,9 +99,13 @@ buildNpmPackage {
     license = licenses.unfree;
     platforms = platforms.linux;
   };
+};
 
+in
+
+(mkPackage npmDepsHash).overrideAttrs (old: {
   passthru = {
-    inherit npmDeps;
-    depsUpdate = npmDepsWithHash lib.fakeHash;
+    srcPatchedUpdate = mkSrcPatched lib.fakeHash;
+    depsUpdate = mkPackage lib.fakeHash;
   };
-}
+})
