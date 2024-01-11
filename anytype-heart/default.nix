@@ -1,26 +1,36 @@
 { src, lib, fetchFromGitHub, buildGoModule, anytype-heart-src }:
 
-buildGoModule {
+let
 
-  name = "anytype-heart-${anytype-heart-src.version}";
+  vendorHash = builtins.fromJSON (builtins.readFile ./vendorHash.json);
 
-  inherit (anytype-heart-src) src version;
+  pkg = vendorHash: buildGoModule {
 
-  vendorHash = "sha256-Y+uzURihYKQmow7lT9ct5/ZlyZeWOCQkts+c1IIdrf0=";
+    name = "anytype-heart-${anytype-heart-src.version}";
 
-  CGO_CFLAGS = [ "-Wno-format-security" ];
+    inherit vendorHash;
 
-  # the C files in the dependencies get lost without this
-  proxyVendor = true;
+    inherit (anytype-heart-src) src version;
 
-  doCheck = false;
+    CGO_CFLAGS = [ "-Wno-format-security" ];
 
-  patches = [ ./0001-remove-amplitude-analytics.patch ];
+    # the C files in the dependencies get lost without this
+    proxyVendor = true;
 
-  meta = with lib; {
-    description = "Shared library for Anytype clients ";
-    homepage = "https://github.com/anyproto/anytype-heart";
-    license = licenses.unfree;
-    platforms = platforms.linux;
+    doCheck = false;
+
+    patches = [ ./0001-remove-amplitude-analytics.patch ];
+
+    meta = with lib; {
+      description = "Shared library for Anytype clients ";
+      homepage = "https://github.com/anyproto/anytype-heart";
+      license = licenses.unfree;
+      platforms = platforms.linux;
+    };
   };
-}
+
+in
+
+(pkg vendorHash).overrideAttrs (old: {
+  passthru.vendorHashUpdate = (pkg lib.fakeHash).goModules;
+})

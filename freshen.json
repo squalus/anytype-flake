@@ -21,6 +21,10 @@
         "attr_path": "anytype.srcPatchedUpdate",
         "filename": "anytype/src-patched.json",
         "run_mode": "always"
+      }, {
+        "attr_path": "anytype-heart.vendorHashUpdate",
+        "filename": "anytype-heart/vendorHash.json",
+        "run_mode": "always"
       }],
       "tests": [{
         "attr_path": "anytype-test"
