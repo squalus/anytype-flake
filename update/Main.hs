@@ -7,6 +7,7 @@ import Data.Vector (Vector)
 import GHC.Generics
 import GitHub (github')
 import Options.Applicative
+import Options.Applicative.Text
 import System.Directory (getCurrentDirectory)
 import System.FilePath
 
@@ -22,6 +23,7 @@ data Command = Update UpdateConfig
 
 data UpdateConfig = UpdateConfig
   { updateConfigFlakeRoot :: !(Maybe FilePath)
+  , updateConfigTag :: !(Maybe Text)
   }
 
 main :: IO ()
@@ -58,6 +60,16 @@ parseUpdateConfig =
               ]
           )
       )
+    <*> optional
+      ( textOption
+          ( mconcat
+              [ long "tag"
+              , short 't'
+              , help "anytype-ts tag to use"
+              , metavar "TAG"
+              ]
+          )
+      )
 
 firstMatch :: (a -> Bool) -> Vector a -> Maybe a
 firstMatch fn v = firstMatch' (Data.Vector.toList v)
@@ -82,6 +94,12 @@ getLatestRelease owner repo = do
       Left x -> fail ("Error fetching anytype-ts releases: " <> show x)
       Right x -> pure x
   pure (firstMatch isTSReleaseStable releases)
+
+getReleaseByTag :: Text -> Text -> Text -> IO GitHub.Release
+getReleaseByTag owner repo tag =
+  github' (GitHub.releaseByTagNameR (GitHub.mkOwnerName owner) (GitHub.mkRepoName repo) tag) >>= \case
+    Left x -> (fail . show) x
+    Right x -> pure x
 
 getTSMiddlewareVersion :: Text -> IO Text
 getTSMiddlewareVersion tsTag = do
@@ -163,10 +181,12 @@ runUpdate c = do
   flakeRoot <- maybe getCurrentDirectory pure (updateConfigFlakeRoot c)
   let heartLockfilePath = flakeRoot </> "anytype-heart/src.json"
       tsLockfilePath = flakeRoot </> "anytype/src.json"
-  tsRelease <-
-    getLatestRelease "anyproto" "anytype-ts" >>= \case
-      Nothing -> fail "Error finding latest stable anytype-ts release"
-      Just x -> pure x
+  tsRelease <- case updateConfigTag c of
+    Nothing ->
+      getLatestRelease "anyproto" "anytype-ts" >>= \case
+        Nothing -> fail "Error finding latest stable anytype-ts release"
+        Just x -> pure x
+    Just tag -> getReleaseByTag "anyproto" "anytype-ts" tag
   let tsTag = GitHub.releaseTagName tsRelease
 
   middlewareVersion <- getTSMiddlewareVersion tsTag

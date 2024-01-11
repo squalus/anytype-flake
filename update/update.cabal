@@ -26,6 +26,7 @@ executable anytype-flake-update
                  , http-conduit
                  , http-types
                  , optparse-applicative
+                 , optparse-text
                  , text
                  , typed-process
                  , vector
