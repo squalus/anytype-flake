@@ -22,9 +22,6 @@
       pkgs = import nixpkgs {
         inherit system;
         config.allowUnfree = true;
-        config.permittedInsecurePackages = [
-          "electron-25.9.0"
-        ];
       };
     in
 
@@ -45,7 +42,6 @@
       anytype = callPackage ./anytype {
         inherit anytype-ts-src anytype-heart anytype-protos-js fix-lockfile remove-telemetry-deps;
         anytype-l10n-src = anytype-l10n;
-        electron = electron_25;
       };
     in
 

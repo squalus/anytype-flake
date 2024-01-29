@@ -1,9 +1,11 @@
 { anytype-ts-src, anytype-l10n-src, anytype-heart, anytype-protos-js, fix-lockfile
 , remove-telemetry-deps
 , lib, fetchFromGitHub, fetchurl, makeWrapper, buildNpmPackage, fetchNpmDeps
-, pkg-config, libsecret, electron, libglvnd, jq, moreutils, stdenvNoCC }:
+, pkg-config, libsecret, electron_28, libglvnd, jq, moreutils, stdenvNoCC }:
 
 let
+
+  electron = electron_28;
 
   pname = "anytype";
 
@@ -46,6 +48,7 @@ npmDepsHash: buildNpmPackage {
 
   patches = [
     ./0001-remove-analytics.patch
+    ./0002-fix-server-path.patch
   ];
 
   postPatch = ''
@@ -85,6 +88,7 @@ npmDepsHash: buildNpmPackage {
     makeWrapper ${electron}/bin/electron $out/bin/anytype \
       --prefix LD_LIBRARY_PATH : ${libglvnd}/lib \
       --add-flags "\''${NIXOS_OZONE_WL:+\''${WAYLAND_DISPLAY:+--ozone-platform-hint=auto --enable-features=WaylandWindowDecorations}}" \
+      --set ELECTRON_FORCE_IS_PACKAGED 1 \
       --add-flags $out/share/app.asar
     cp ${./anytype.desktop} $out/share/applications/anytype.desktop
     for size in 16x16 32x32 64x64 128x128 256x256 512x512 1024x1024; do

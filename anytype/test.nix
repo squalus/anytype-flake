@@ -15,11 +15,12 @@
 
   testScript = ''
     machine.wait_for_x()
+    machine.succeed("sleep 20")
     machine.wait_until_succeeds("xwininfo -root -tree")
     machine.execute(
       "anytype --no-sandbox >&2 &"
     )
-
+    machine.succeed("sleep 10")
     machine.wait_for_window("Anytype")
   '';
 
