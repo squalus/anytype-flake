@@ -1,33 +1,40 @@
-From b5d95baf90ab42fdd936c5f408b3662587153eb8 Mon Sep 17 00:00:00 2001
+From e0b3b353d6d70932ade80d6577727d14f59db3c3 Mon Sep 17 00:00:00 2001
 From: squalus <squalus@squalus.net>
-Date: Mon, 1 Jan 2024 16:46:47 -0800
+Date: Mon, 11 Mar 2024 07:53:35 -0700
 Subject: [PATCH] remove amplitude analytics
 
 ---
- metrics/amplitude/client.go | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ metrics/amplitude/client.go | 1 +
+ metrics/service.go          | 4 ++--
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
 diff --git a/metrics/amplitude/client.go b/metrics/amplitude/client.go
-index e3697d2fb..3c04718df 100644
+index 4667875b7..fbe6f96c9 100644
 --- a/metrics/amplitude/client.go
 +++ b/metrics/amplitude/client.go
-@@ -8,7 +8,7 @@ import (
- 	"time"
- )
- 
--const eventEndpoint = "https://amplitude.anytype.io/2/httpapi"
-+const eventEndpoint = "https://127.0.0.1:61234"
- 
- // Client manages the communication to the Amplitude API
- type Client struct {
-@@ -55,6 +55,7 @@ func (c *Client) SetClient(client *http.Client) {
+@@ -64,6 +64,7 @@ func New(eventEndpoint string, key string, isCompressed bool) Service {
  }
  
- func (c *Client) Events(events []Event) error {
+ func (c *Client) SendEvents(amplEvents []Event, info AppInfoProvider) error {
 +	return nil
- 	req := EventRequest{
- 		APIKey: c.key,
- 		Events: events,
+ 	if c.key == "" {
+ 		return nil
+ 	}
+diff --git a/metrics/service.go b/metrics/service.go
+index b8e91e5cc..915f89b46 100644
+--- a/metrics/service.go
++++ b/metrics/service.go
+@@ -27,8 +27,8 @@ const (
+ 	inhouse
+ )
+ 
+-const amplEndpoint = "https://amplitude.anytype.io/2/httpapi"
+-const inHouseEndpoint = "https://telemetry.anytype.io/2/httpapi"
++const amplEndpoint = "https://127.0.0.1:61110"
++const inHouseEndpoint = "https://127.0.0.1:6110"
+ 
+ type SamplableEvent interface {
+ 	amplitude.Event
 -- 
 2.42.0
 

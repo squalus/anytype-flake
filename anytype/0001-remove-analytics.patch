@@ -1,18 +1,18 @@
-From 0cc6a0badeb3bfc837b9aa0c57166057e3729279 Mon Sep 17 00:00:00 2001
+From d4505d371a079f1c203f7842700766a8600e38e4 Mon Sep 17 00:00:00 2001
 From: squalus <squalus@squalus.net>
 Date: Mon, 29 Jan 2024 09:39:15 -0800
-Subject: [PATCH 1/2] remove analytics
+Subject: [PATCH 1/2] remove amplitude analytics
 
 ---
- electron/hook/afterpack.js   | 21 ++-------------------
- src/ts/app.tsx               | 18 ------------------
- src/ts/lib/analytics.ts      | 29 +++--------------------------
+ electron/hook/afterpack.js   | 21 ++------------------
+ src/ts/app.tsx               | 19 +-----------------
+ src/ts/lib/analytics.ts      | 37 +++---------------------------------
  src/ts/lib/api/dispatcher.ts |  2 --
- src/ts/lib/util/data.ts      |  2 --
- 5 files changed, 5 insertions(+), 67 deletions(-)
+ src/ts/lib/util/data.ts      |  4 ----
+ 5 files changed, 6 insertions(+), 77 deletions(-)
 
 diff --git a/electron/hook/afterpack.js b/electron/hook/afterpack.js
-index 3e7625592..b1b303f9b 100644
+index 1d8f72a62..b1b303f9b 100644
 --- a/electron/hook/afterpack.js
 +++ b/electron/hook/afterpack.js
 @@ -1,21 +1,4 @@
@@ -36,28 +36,29 @@ index 3e7625592..b1b303f9b 100644
 +};
  
 -	return await cli.releases.uploadSourceMaps(context.packager.appInfo.version, { 
--		include: [ '../../dist/main.js.map' ],
+-		include: [ '../../dist/js/main.js.map' ],
 -	});
 -};
 \ No newline at end of file
 diff --git a/src/ts/app.tsx b/src/ts/app.tsx
-index ab9f9dd77..31713f148 100644
+index 883f76446..748d83c1b 100644
 --- a/src/ts/app.tsx
 +++ b/src/ts/app.tsx
-@@ -1,6 +1,5 @@
+@@ -1,6 +1,6 @@
  import * as React from 'react';
  import * as hs from 'history';
 -import * as Sentry from '@sentry/browser';
- import mermaid from 'mermaid';
++import mermaid from 'mermaid';
  import $ from 'jquery';
  import raf from 'raf';
-@@ -133,23 +132,6 @@ enableLogging({
+ import { RouteComponentProps } from 'react-router';
+@@ -132,23 +132,6 @@ enableLogging({
  });
  */
  
 -Sentry.init({
--	release: window.Electron.version.app,
--	environment: window.Electron.isPackaged ? 'production' : 'development',
+-	release: UtilCommon.getElectron().version.app,
+-	environment: UtilCommon.getElectron().isPackaged ? 'production' : 'development',
 -	dsn: Constant.sentry,
 -	maxBreadcrumbs: 0,
 -	beforeSend: (e: any) => {
@@ -76,7 +77,7 @@ index ab9f9dd77..31713f148 100644
  	render () {
  		return (
 diff --git a/src/ts/lib/analytics.ts b/src/ts/lib/analytics.ts
-index 3d237e7a1..aec59815e 100644
+index 5bf189ab1..eb352e5f7 100644
 --- a/src/ts/lib/analytics.ts
 +++ b/src/ts/lib/analytics.ts
 @@ -1,4 +1,3 @@
@@ -98,17 +99,21 @@ index 3d237e7a1..aec59815e 100644
  
  	isAllowed (): boolean {
 -		const { config } = commonStore;
--		return !(config.sudo || [ 'alpha', 'beta' ].includes(config.channel) || !window.Electron.isPackaged) || this.debug();
+-		return !(config.sudo || [ 'alpha', 'beta' ].includes(config.channel) || !UtilCommon.getElectron().isPackaged) || this.debug();
 +		return false;
  	};
  	
- 	init () {
-@@ -49,27 +47,6 @@ class Analytics {
+ 	init (options?: any) {
+@@ -33,35 +31,6 @@ class Analytics {
+ 			return;
+ 		};
  
- 		C.MetricsSetParameters(platform, version.join('-'));
- 
+-		const { interfaceLang } = commonStore;
+-		const electron = UtilCommon.getElectron();
+-		const platform = UtilCommon.getPlatform();
+-
 -		this.instance = amplitude.getInstance();
--		this.instance.init(Constant.amplitude, null, {
+-		this.instance.init(Constant.amplitude, null, Object.assign({
 -			apiEndpoint: URL,
 -			batchEvents: true,
 -			saveEvents: true,
@@ -118,20 +123,24 @@ index 3d237e7a1..aec59815e 100644
 -			trackingOptions: {
 -				ipAddress: false,
 -			},
--		});
+-		}, options || {}));
 -
--		this.instance.setVersionName(window.Electron.version.app);
--		this.instance.setUserProperties({ 
+-		const props: any = { 
 -			deviceType: 'Desktop',
 -			platform,
--			osVersion: window.Electron.version.os,
 -			interfaceLang,
--		});
+-		};
 -
+-		if (electron.version) {
+-			props.osVersion = electron.version.os;
+-			this.instance.setVersionName(electron.version.app);
+-		};
+-
+-		this.instance.setUserProperties(props);
  		this.removeContext();
- 		this.log('[Analytics].init');
- 	};
-@@ -504,4 +481,4 @@ class Analytics {
+ 		this.setVersion();
+ 
+@@ -523,4 +492,4 @@ class Analytics {
  
  };
  
@@ -139,15 +148,15 @@ index 3d237e7a1..aec59815e 100644
 \ No newline at end of file
 + export const analytics: Analytics = new Analytics();
 diff --git a/src/ts/lib/api/dispatcher.ts b/src/ts/lib/api/dispatcher.ts
-index 9c658d7c6..c68855efa 100644
+index 6dbf2b18d..fce1ca56f 100644
 --- a/src/ts/lib/api/dispatcher.ts
 +++ b/src/ts/lib/api/dispatcher.ts
 @@ -1,4 +1,3 @@
 -import * as Sentry from '@sentry/browser';
+ import $ from 'jquery';
  import arrayMove from 'array-move';
  import { observable, set } from 'mobx';
- import Commands from 'dist/lib/pb/protos/commands_pb';
-@@ -1197,7 +1196,6 @@ class Dispatcher {
+@@ -1240,7 +1239,6 @@ class Dispatcher {
  					console.error('Error', type, 'code:', message.error.code, 'description:', message.error.description);
  
  					if (!SKIP_SENTRY_ERRORS.includes(type)) {
@@ -156,7 +165,7 @@ index 9c658d7c6..c68855efa 100644
  					};
  
 diff --git a/src/ts/lib/util/data.ts b/src/ts/lib/util/data.ts
-index c8342150f..85a11be49 100644
+index f2ade76c2..6e9690330 100644
 --- a/src/ts/lib/util/data.ts
 +++ b/src/ts/lib/util/data.ts
 @@ -1,7 +1,6 @@
@@ -167,10 +176,12 @@ index c8342150f..85a11be49 100644
  
  type SearchSubscribeParams = Partial<{
  	subId: string;
-@@ -216,7 +215,6 @@ class UtilData {
+@@ -212,9 +211,6 @@ class UtilData {
  
- 		analytics.profile(info.analyticsId, info.networkId);
- 
+ 		commonStore.gatewaySet(info.gatewayUrl);
+ 		commonStore.spaceSet(info.accountSpaceId);
+-
+-		analytics.profile(info.analyticsId, info.networkId);
 -		Sentry.setUser({ id: info.analyticsId });
  	};
  	
