@@ -3,7 +3,7 @@
   description = "Anytype";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-23.11";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     systems.url = "github:nix-systems/default-linux";
     flake-utils = {
       url = "flake:flake-utils";
@@ -32,7 +32,6 @@
       remove-telemetry-deps = callPackage ./remove-telemetry-deps {};
       anytype-ts-src = callPackage ./anytype/src.nix { };
       anytype-heart-src = callPackage ./anytype-heart/src.nix { };
-      protoc-gen-js = callPackage ./protoc-gen-js {};
       anytype-heart = callPackage ./anytype-heart {
         inherit anytype-heart-src;
       };
