@@ -1,18 +1,18 @@
-From e0b3b353d6d70932ade80d6577727d14f59db3c3 Mon Sep 17 00:00:00 2001
+From e15bff13b96298b61b89e445ccb9b8357f5afbd4 Mon Sep 17 00:00:00 2001
 From: squalus <squalus@squalus.net>
 Date: Mon, 11 Mar 2024 07:53:35 -0700
 Subject: [PATCH] remove amplitude analytics
 
 ---
- metrics/amplitude/client.go | 1 +
- metrics/service.go          | 4 ++--
- 2 files changed, 3 insertions(+), 2 deletions(-)
+ metrics/anymetry/client.go | 1 +
+ metrics/service.go         | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/metrics/amplitude/client.go b/metrics/amplitude/client.go
-index 4667875b7..fbe6f96c9 100644
---- a/metrics/amplitude/client.go
-+++ b/metrics/amplitude/client.go
-@@ -64,6 +64,7 @@ func New(eventEndpoint string, key string, isCompressed bool) Service {
+diff --git a/metrics/anymetry/client.go b/metrics/anymetry/client.go
+index 8af9ca572..aefb57091 100644
+--- a/metrics/anymetry/client.go
++++ b/metrics/anymetry/client.go
+@@ -62,6 +62,7 @@ func New(eventEndpoint string, key string, isCompressed bool) Service {
  }
  
  func (c *Client) SendEvents(amplEvents []Event, info AppInfoProvider) error {
@@ -21,20 +21,18 @@ index 4667875b7..fbe6f96c9 100644
  		return nil
  	}
 diff --git a/metrics/service.go b/metrics/service.go
-index b8e91e5cc..915f89b46 100644
+index f41e09d29..2e1cdd06f 100644
 --- a/metrics/service.go
 +++ b/metrics/service.go
-@@ -27,8 +27,8 @@ const (
- 	inhouse
+@@ -26,7 +26,7 @@ const (
+ 	inhouse anymetry.MetricsBackend = iota
  )
  
--const amplEndpoint = "https://amplitude.anytype.io/2/httpapi"
 -const inHouseEndpoint = "https://telemetry.anytype.io/2/httpapi"
-+const amplEndpoint = "https://127.0.0.1:61110"
 +const inHouseEndpoint = "https://127.0.0.1:6110"
  
  type SamplableEvent interface {
- 	amplitude.Event
+ 	anymetry.Event
 -- 
 2.42.0
 

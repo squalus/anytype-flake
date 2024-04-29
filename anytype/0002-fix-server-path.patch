@@ -1,4 +1,4 @@
-From 3b355352143a8af00a4f7298512cdd58257851e4 Mon Sep 17 00:00:00 2001
+From c2762611e6737bc8c9cac68b5ce04500873e5883 Mon Sep 17 00:00:00 2001
 From: squalus <squalus@squalus.net>
 Date: Mon, 29 Jan 2024 10:41:45 -0800
 Subject: [PATCH 2/2] fix server path
@@ -8,7 +8,7 @@ Subject: [PATCH 2/2] fix server path
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/electron.js b/electron.js
-index e99943047..05206db8c 100644
+index ee925a8ce..4292f5339 100644
 --- a/electron.js
 +++ b/electron.js
 @@ -8,7 +8,7 @@ const port = process.env.SERVER_PORT;
@@ -18,9 +18,9 @@ index e99943047..05206db8c 100644
 -const binPath = fixPathForAsarUnpack(path.join(__dirname, 'dist', `anytypeHelper${is.windows ? '.exe' : ''}`));
 +const binPath = fixPathForAsarUnpack(path.join(__dirname.replace('app.asar', 'app.asar.unpacked'), 'dist', `anytypeHelper${is.windows ? '.exe' : ''}`));
  
- if (is.development) {
- 	app.setPath('userData', path.join(app.getPath('userData'), '_dev'));
-@@ -206,4 +206,4 @@ app.on('open-url', (e, url) => {
+ // Fix notifications app name
+ if (is.windows) {
+@@ -209,4 +209,4 @@ app.on('open-url', (e, url) => {
  		Util.send(mainWindow, 'route', Util.getRouteFromUrl(url));
  		mainWindow.show();
  	};
