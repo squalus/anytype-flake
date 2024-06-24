@@ -8,6 +8,18 @@ Subject: [PATCH] remove amplitude analytics
  metrics/service.go         | 2 +-
  2 files changed, 2 insertions(+), 1 deletion(-)
 
+diff --git a/pkg/lib/logging/gelf.go b/pkg/lib/logging/gelf.go
+index 661441f..431eda0 100644
+--- a/pkg/lib/logging/gelf.go
++++ b/pkg/lib/logging/gelf.go
+@@ -29,6 +29,7 @@ var (
+ )
+
+ func registerGelfSink(config *logger.Config) {
++	return
+	gelfSinkWrapper.batch = mb.New(1000)
+	tlsWriter, err := gelf.NewTLSWriter(graylogHost, nil)
+	if err != nil {
 diff --git a/metrics/anymetry/client.go b/metrics/anymetry/client.go
 index 8af9ca572..aefb57091 100644
 --- a/metrics/anymetry/client.go
