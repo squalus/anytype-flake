@@ -87,10 +87,10 @@ index 2221a903c..5e9a642c3 100644
 +++ b/src/ts/lib/analytics.ts
 @@ -1,4 +1,3 @@
 -import * as amplitude from 'amplitude-js';
- import { I, C, UtilCommon, Storage, UtilSpace } from 'Lib';
+ import { I, C, UtilCommon, Storage, UtilSpace, Relation } from 'Lib';
  import { commonStore, dbStore } from 'Store';
- import Constant from 'json/constant.json';
-@@ -12,7 +11,7 @@ const KEYS = [
+ const Constant = require('json/constant.json');
+@@ -11,7 +10,7 @@ const KEYS = [
  ];
  const KEY_CONTEXT = 'analyticsContext';
  const KEY_ORIGINAL_ID = 'analyticsOriginalId';
@@ -163,27 +163,27 @@ index 2e31a72ff..5be179671 100644
  					};
  
 diff --git a/src/ts/lib/util/data.ts b/src/ts/lib/util/data.ts
-index 92437ee35..4ade76cf9 100644
+index 8249479..0cbcc77 100644
 --- a/src/ts/lib/util/data.ts
 +++ b/src/ts/lib/util/data.ts
 @@ -1,7 +1,6 @@
  import { I, C, M, keyboard, translate, UtilCommon, UtilRouter, Storage, analytics, dispatcher, Mark, UtilObject, focus, UtilSpace, Renderer, Action, Survey, Onboarding } from 'Lib';
  import { commonStore, blockStore, detailStore, dbStore, authStore, notificationStore, popupStore } from 'Store';
- import Constant from 'json/constant.json';
+ const Constant = require('json/constant.json');
 -import * as Sentry from '@sentry/browser';
- 
+
  type SearchSubscribeParams = Partial<{
  	subId: string;
-@@ -161,9 +160,6 @@ class UtilData {
- 
+@@ -181,8 +180,6 @@ class UtilData {
  		commonStore.gatewaySet(info.gatewayUrl);
  		commonStore.spaceSet(info.accountSpaceId);
--
+
 -		analytics.profile(info.analyticsId, info.networkId);
 -		Sentry.setUser({ id: info.analyticsId });
  	};
  	
  	onAuth (param?: any, callBack?: () => void) {
+
 -- 
 2.42.0
 
