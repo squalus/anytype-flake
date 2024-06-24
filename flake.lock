@@ -3,11 +3,11 @@
     "anytype-l10n": {
       "flake": false,
       "locked": {
-        "lastModified": 1714397595,
-        "narHash": "sha256-hr8gcbNpHCAfQA9dDOQb1BVZCxowfU7z+wXgklgMlao=",
+        "lastModified": 1718988737,
+        "narHash": "sha256-dFyG78YKmW6o/Gy46fwXIdj+JavgG8J/SdOaeqbTjDs=",
         "owner": "anyproto",
         "repo": "l10n-anytype-ts",
-        "rev": "31a8411dc47273042614a6a5a73a39cac5a96a12",
+        "rev": "f6548b69fc4e6524efa20b5ab0a0ec3cea0de63d",
         "type": "github"
       },
       "original": {
@@ -37,11 +37,11 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1714253743,
-        "narHash": "sha256-mdTQw2XlariysyScCv2tTE45QSU9v/ezLcHJ22f0Nxc=",
+        "lastModified": 1719075281,
+        "narHash": "sha256-CyyxvOwFf12I91PBWz43iGT1kjsf5oi6ax7CrvaMyAo=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "58a1abdbae3217ca6b702f03d3b35125d88a2994",
+        "rev": "a71e967ef3694799d0c418c98332f7ff4cc5f6af",
         "type": "github"
       },
       "original": {
