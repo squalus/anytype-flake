@@ -1,7 +1,7 @@
 { anytype-ts-src, anytype-l10n-src, anytype-heart, anytype-protos-js, fix-lockfile
 , remove-telemetry-deps
 , lib, fetchFromGitHub, fetchurl, makeWrapper, buildNpmPackage, fetchNpmDeps
-, pkg-config, libsecret, electron_29, libglvnd, jq, moreutils, stdenvNoCC }:
+, pkg-config, go, libsecret, electron_29, libglvnd, jq, moreutils, stdenvNoCC }:
 
 let
 
@@ -62,7 +62,7 @@ npmDepsHash: buildNpmPackage {
 
   buildInputs = [ libsecret ];
 
-  nativeBuildInputs = [ pkg-config ];
+  nativeBuildInputs = [ pkg-config go ];
 
   preBuild = ''
     npm exec electron-builder install-app-deps
@@ -72,6 +72,8 @@ npmDepsHash: buildNpmPackage {
     rm -rf node_modules/keytar/build
     mkdir -p node_modules/keytar/build/Release
     mv keytar.node node_modules/keytar/build/Release
+
+    npm run build:nmh
   '';
 
   postBuild = ''
