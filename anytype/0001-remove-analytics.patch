@@ -1,15 +1,15 @@
-From 1c7485887b0dca8e8e2b860c840f6fefe0d7bbc7 Mon Sep 17 00:00:00 2001
+From ff140e14b3f2e060f186ed86e0a52d75777bdfea Mon Sep 17 00:00:00 2001
 From: squalus <squalus@squalus.net>
 Date: Mon, 29 Jan 2024 09:39:15 -0800
 Subject: [PATCH 1/2] remove amplitude analytics
 
 ---
- electron/hook/afterpack.js   | 21 ++-------------------
- src/ts/app.tsx               | 24 +-----------------------
- src/ts/lib/analytics.ts      | 35 ++---------------------------------
+ electron/hook/afterpack.js   | 21 ++------------------
+ src/ts/app.tsx               | 24 +----------------------
+ src/ts/lib/analytics.ts      | 37 +++---------------------------------
  src/ts/lib/api/dispatcher.ts |  2 --
  src/ts/lib/util/data.ts      |  4 ----
- 5 files changed, 5 insertions(+), 81 deletions(-)
+ 5 files changed, 6 insertions(+), 82 deletions(-)
 
 diff --git a/electron/hook/afterpack.js b/electron/hook/afterpack.js
 index 1d8f72a62..b1b303f9b 100644
@@ -41,7 +41,7 @@ index 1d8f72a62..b1b303f9b 100644
 -};
 \ No newline at end of file
 diff --git a/src/ts/app.tsx b/src/ts/app.tsx
-index 2f88622ec..dc8685ea9 100644
+index 7ff0d01b6..c12aeb2d7 100644
 --- a/src/ts/app.tsx
 +++ b/src/ts/app.tsx
 @@ -1,6 +1,6 @@
@@ -82,15 +82,15 @@ index 2f88622ec..dc8685ea9 100644
  	render () {
  		return (
 diff --git a/src/ts/lib/analytics.ts b/src/ts/lib/analytics.ts
-index 2221a903c..5e9a642c3 100644
+index 1f3dc8fc1..646f3b3d2 100644
 --- a/src/ts/lib/analytics.ts
 +++ b/src/ts/lib/analytics.ts
 @@ -1,4 +1,3 @@
 -import * as amplitude from 'amplitude-js';
- import { I, C, UtilCommon, Storage, UtilSpace } from 'Lib';
+ import { I, C, UtilCommon, Storage, UtilSpace, Relation } from 'Lib';
  import { commonStore, dbStore } from 'Store';
- import Constant from 'json/constant.json';
-@@ -12,7 +11,7 @@ const KEYS = [
+ const Constant = require('json/constant.json');
+@@ -11,7 +10,7 @@ const KEYS = [
  ];
  const KEY_CONTEXT = 'analyticsContext';
  const KEY_ORIGINAL_ID = 'analyticsOriginalId';
@@ -145,8 +145,15 @@ index 2221a903c..5e9a642c3 100644
  		this.removeContext();
  		this.setVersion();
  
+@@ -613,4 +582,4 @@ class Analytics {
+ 
+ };
+ 
+- export const analytics: Analytics = new Analytics();
+\ No newline at end of file
++ export const analytics: Analytics = new Analytics();
 diff --git a/src/ts/lib/api/dispatcher.ts b/src/ts/lib/api/dispatcher.ts
-index 2e31a72ff..5be179671 100644
+index 505bdad49..aa8757be7 100644
 --- a/src/ts/lib/api/dispatcher.ts
 +++ b/src/ts/lib/api/dispatcher.ts
 @@ -1,4 +1,3 @@
@@ -154,7 +161,7 @@ index 2e31a72ff..5be179671 100644
  import $ from 'jquery';
  import arrayMove from 'array-move';
  import { observable, set } from 'mobx';
-@@ -1258,7 +1257,6 @@ class Dispatcher {
+@@ -1159,7 +1158,6 @@ class Dispatcher {
  					console.error('Error', type, 'code:', message.error.code, 'description:', message.error.description);
  
  					if (!SKIP_SENTRY_ERRORS.includes(type)) {
@@ -163,18 +170,18 @@ index 2e31a72ff..5be179671 100644
  					};
  
 diff --git a/src/ts/lib/util/data.ts b/src/ts/lib/util/data.ts
-index 92437ee35..4ade76cf9 100644
+index 8249479ec..f086e2609 100644
 --- a/src/ts/lib/util/data.ts
 +++ b/src/ts/lib/util/data.ts
 @@ -1,7 +1,6 @@
  import { I, C, M, keyboard, translate, UtilCommon, UtilRouter, Storage, analytics, dispatcher, Mark, UtilObject, focus, UtilSpace, Renderer, Action, Survey, Onboarding } from 'Lib';
  import { commonStore, blockStore, detailStore, dbStore, authStore, notificationStore, popupStore } from 'Store';
- import Constant from 'json/constant.json';
+ const Constant = require('json/constant.json');
 -import * as Sentry from '@sentry/browser';
  
  type SearchSubscribeParams = Partial<{
  	subId: string;
-@@ -161,9 +160,6 @@ class UtilData {
+@@ -180,9 +179,6 @@ class UtilData {
  
  		commonStore.gatewaySet(info.gatewayUrl);
  		commonStore.spaceSet(info.accountSpaceId);
@@ -185,5 +192,5 @@ index 92437ee35..4ade76cf9 100644
  	
  	onAuth (param?: any, callBack?: () => void) {
 -- 
-2.42.0
+2.44.1
 

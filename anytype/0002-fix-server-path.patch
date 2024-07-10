@@ -1,4 +1,4 @@
-From c2762611e6737bc8c9cac68b5ce04500873e5883 Mon Sep 17 00:00:00 2001
+From a2bae78557d8ebe8032466a4b125102af0c4ace3 Mon Sep 17 00:00:00 2001
 From: squalus <squalus@squalus.net>
 Date: Mon, 29 Jan 2024 10:41:45 -0800
 Subject: [PATCH 2/2] fix server path
@@ -8,7 +8,7 @@ Subject: [PATCH 2/2] fix server path
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/electron.js b/electron.js
-index ee925a8ce..4292f5339 100644
+index d06dd0481..d1ccc5c9d 100644
 --- a/electron.js
 +++ b/electron.js
 @@ -8,7 +8,7 @@ const port = process.env.SERVER_PORT;
@@ -20,7 +20,7 @@ index ee925a8ce..4292f5339 100644
  
  // Fix notifications app name
  if (is.windows) {
-@@ -209,4 +209,4 @@ app.on('open-url', (e, url) => {
+@@ -221,4 +221,4 @@ app.on('open-url', (e, url) => {
  		Util.send(mainWindow, 'route', Util.getRouteFromUrl(url));
  		mainWindow.show();
  	};
@@ -28,5 +28,5 @@ index ee925a8ce..4292f5339 100644
 \ No newline at end of file
 +});
 -- 
-2.42.0
+2.44.1
 
