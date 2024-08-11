@@ -1,4 +1,4 @@
-From a2bae78557d8ebe8032466a4b125102af0c4ace3 Mon Sep 17 00:00:00 2001
+From e9317b8f787e80740737b374476a71718c0d12fc Mon Sep 17 00:00:00 2001
 From: squalus <squalus@squalus.net>
 Date: Mon, 29 Jan 2024 10:41:45 -0800
 Subject: [PATCH 2/2] fix server path
