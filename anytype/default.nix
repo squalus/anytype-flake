@@ -1,7 +1,7 @@
 { anytype-ts-src, anytype-l10n-src, anytype-heart, anytype-protos-js, fix-lockfile
 , remove-telemetry-deps
 , lib, fetchFromGitHub, fetchurl, makeWrapper, buildNpmPackage, fetchNpmDeps
-, pkg-config, libsecret, electron_31, libglvnd, jq, moreutils, stdenvNoCC }:
+, pkg-config, libsecret, electron_31, libglvnd, jq, moreutils, stdenvNoCC, go }:
 
 let
 
@@ -62,9 +62,10 @@ npmDepsHash: buildNpmPackage {
 
   buildInputs = [ libsecret ];
 
-  nativeBuildInputs = [ pkg-config ];
+  nativeBuildInputs = [ pkg-config go ];
 
   preBuild = ''
+    npm run build:nmh
     npm exec electron-builder install-app-deps
 
     # prevent intermediate build artifacts from making it into the output and bloating the closure

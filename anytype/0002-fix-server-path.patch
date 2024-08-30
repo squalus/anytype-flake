@@ -1,14 +1,15 @@
-From e9317b8f787e80740737b374476a71718c0d12fc Mon Sep 17 00:00:00 2001
+From 3563053002beef251548fb189557185487ee06f1 Mon Sep 17 00:00:00 2001
 From: squalus <squalus@squalus.net>
-Date: Mon, 29 Jan 2024 10:41:45 -0800
+Date: Fri, 30 Aug 2024 11:13:26 +0000
 Subject: [PATCH 2/2] fix server path
 
 ---
- electron.js | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ electron.js                                   | 2 +-
+ electron/js/lib/installNativeMessagingHost.js | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/electron.js b/electron.js
-index d06dd0481..d1ccc5c9d 100644
+index d06dd04..7a54267 100644
 --- a/electron.js
 +++ b/electron.js
 @@ -8,7 +8,7 @@ const port = process.env.SERVER_PORT;
@@ -20,13 +21,19 @@ index d06dd0481..d1ccc5c9d 100644
  
  // Fix notifications app name
  if (is.windows) {
-@@ -221,4 +221,4 @@ app.on('open-url', (e, url) => {
- 		Util.send(mainWindow, 'route', Util.getRouteFromUrl(url));
- 		mainWindow.show();
- 	};
--});
-\ No newline at end of file
-+});
+diff --git a/electron/js/lib/installNativeMessagingHost.js b/electron/js/lib/installNativeMessagingHost.js
+index 22de950..f964668 100644
+--- a/electron/js/lib/installNativeMessagingHost.js
++++ b/electron/js/lib/installNativeMessagingHost.js
+@@ -23,7 +23,7 @@ const EXE_PATH = app.getPath('exe');
+ 
+ const getManifestPath = () => {
+ 	const fn = `nativeMessagingHost${is.windows ? '.exe' : ''}`;
+-	return path.join(fixPathForAsarUnpack(__dirname), '..', '..', '..', 'dist', fn);
++	return path.join(fixPathForAsarUnpack(__dirname.replace('app.asar', 'app.asar.unpacked')), '..', '..', '..', 'dist', fn);
+ };
+ 
+ const getHomeDir = () => {
 -- 
-2.44.1
+2.45.2
 
