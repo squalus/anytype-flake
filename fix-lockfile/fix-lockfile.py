@@ -9,13 +9,14 @@ import itertools
 import json
 import sys
 import urllib.request
+import time
 
 
 def package_split(components):
     return [list(group) for k, group in itertools.groupby(components, lambda x: x == "node_modules") if not k]
 
-def url_hash(url):
-    remote = urllib.request.urlopen(url)
+def url_hash(url, timeout=60):
+    remote = urllib.request.urlopen(url, timeout=timeout)
     max_file_size=1000*1024*1024
     hash = hashlib.sha512()
     total_read = 0
@@ -28,6 +29,18 @@ def url_hash(url):
     digest = hash.digest()
     encoded_digest = base64.b64encode(digest).decode()
     return f'sha512-{encoded_digest}'
+
+def url_hash_retry(url, retries=10, delay=1, timeout=60):
+    for attempt in range(retries):
+        try:
+            val = url_hash(url, timeout=timeout)
+            return val
+        except Exception as e:
+            print(f"Attempt {attempt + 1} failed with error: {e}")
+            if attempt < retries - 1:
+                time.sleep(delay)
+            else:
+                raise
 
 if len(sys.argv) != 3:
     print(f'Usage: {sys.argv[0]} <input-lockfile> <output-lockfile>')
@@ -65,7 +78,7 @@ for name in packages:
         pathname = shortname
     url = f"https://registry.npmjs.org/{pathname}/-/{shortname}-{version}.tgz"
     print(f'  guessed url={url}')
-    sha512=url_hash(url)
+    sha512=url_hash_retry(url)
     print(f'  sha512={sha512}')
     package['resolved'] = url
     package['integrity'] = sha512
