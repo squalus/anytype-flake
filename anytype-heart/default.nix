@@ -1,4 +1,4 @@
-{ src, lib, fetchFromGitHub, buildGoModule, anytype-heart-src }:
+{ lib, buildGoModule, libtantivy-go, anytype-heart-src }:
 
 let
 
@@ -20,6 +20,11 @@ let
     doCheck = false;
 
     patches = [ ./0001-remove-amplitude-analytics.patch ];
+
+    preBuild = ''
+      mkdir -p deps/libs/linux-amd64-musl
+      cp ${libtantivy-go}/lib/libtantivy_go.a deps/libs/linux-amd64-musl
+    '';
 
     meta = with lib; {
       description = "Shared library for Anytype clients ";

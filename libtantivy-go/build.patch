@@ -1,0 +1,20 @@
+diff --git a/src/build.rs b/src/build.rs
+index dcb2c3f..76108f3 100644
+--- a/src/build.rs
++++ b/src/build.rs
+@@ -5,7 +5,7 @@ use std::error::Error;
+ use std::fs::{self, OpenOptions};
+ use std::io::{self, Write};
+ 
+-const FILE_PATH: &str = "../bindings.h";
++const FILE_PATH: &str = "bindings.h";
+ 
+ fn add_typedefs() -> io::Result<()> {
+     let include = "#include \"binding_typedefs.h\"\n";
+@@ -40,4 +40,4 @@ fn main() -> Result<(), Box<dyn Error>> {
+ 
+     add_typedefs()?;
+     Ok(())
+-}
+\ No newline at end of file
++}

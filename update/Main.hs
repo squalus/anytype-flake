@@ -12,6 +12,7 @@ import System.Directory (getCurrentDirectory)
 import System.FilePath
 
 import Data.Aeson qualified
+import Data.List qualified
 import Data.Text qualified
 import Data.Text.IO qualified
 import Data.Vector qualified
@@ -19,7 +20,7 @@ import GitHub qualified
 import Prefetch qualified
 import Text.Casing qualified
 
-data Command = Update UpdateConfig
+newtype Command = Update UpdateConfig
 
 data UpdateConfig = UpdateConfig
   { updateConfigFlakeRoot :: !(Maybe FilePath)
@@ -42,7 +43,7 @@ parseCommand =
       , progDesc "Flake update"
       ]
   where
-    sub = hsubparser (parseUpdate)
+    sub = hsubparser parseUpdate
 
 parseUpdate :: Mod CommandFields Command
 parseUpdate = command "update" (info (Update <$> parseUpdateConfig) (fullDesc <> progDesc "Update"))
@@ -101,8 +102,8 @@ getReleaseByTag owner repo tag =
     Left x -> (fail . show) x
     Right x -> pure x
 
-getTSMiddlewareVersion :: Text -> IO Text
-getTSMiddlewareVersion tsTag = do
+getHeartVersion :: Text -> IO Text
+getHeartVersion tsTag = do
   middlewareVersionContent <-
     github' (GitHub.contentsForR "anyproto" "anytype-ts" "middleware.version" (Just tsTag)) >>= \case
       Left x -> fail ("Error fetching anytype-ts middleware.version file: " <> show x)
@@ -114,6 +115,30 @@ getTSMiddlewareVersion tsTag = do
   case decodeBase64 middlewareVersionContentText of
     Left x -> fail ("Error in base64 decode of middleware.version file" <> Data.Text.unpack x)
     Right x -> pure x
+
+getHeartGoMod :: Text -> IO Text
+getHeartGoMod heartTag = do
+  goModContent <-
+    github' (GitHub.contentsForR "anyproto" "anytype-heart" "go.mod" (Just heartTag)) >>= \case
+      Left x -> fail ("Error fetching anytype-heart go.mod file: " <> show x)
+      Right x -> pure x
+  goModContentFile <- case goModContent of
+    GitHub.ContentFile cfd -> pure cfd
+    _ -> fail "Unexpected content type of go.mod"
+  let goModContentText = (Data.Text.strip . GitHub.contentFileContent) goModContentFile
+      joined = mconcat . Data.Text.lines $ goModContentText
+  case decodeBase64 joined of
+    Left x -> fail ("Error in base64 decode of anytype-heart go.mod file" <> Data.Text.unpack x)
+    Right x -> pure x
+
+getTantivyTag :: Text -> Maybe Text
+getTantivyTag heartGoMod = do
+  let lines' = Data.Text.lines heartGoMod
+  line <- Data.List.find (Data.Text.isInfixOf "tantivy-go") lines'
+  let words' = Data.Text.words (Data.Text.strip line)
+  case words' of
+    ["github.com/anyproto/tantivy-go", tag] -> pure tag
+    _ -> Nothing
 
 heartReleaseByTag :: Text -> IO GitHub.Release
 heartReleaseByTag tag = do
@@ -181,6 +206,7 @@ runUpdate c = do
   flakeRoot <- maybe getCurrentDirectory pure (updateConfigFlakeRoot c)
   let heartLockfilePath = flakeRoot </> "anytype-heart/src.json"
       tsLockfilePath = flakeRoot </> "anytype/src.json"
+      tantivyLockfilePath = flakeRoot </> "libtantivy-go/src.json"
   tsRelease <- case updateConfigTag c of
     Nothing ->
       getLatestRelease "anyproto" "anytype-ts" >>= \case
@@ -189,10 +215,14 @@ runUpdate c = do
     Just tag -> getReleaseByTag "anyproto" "anytype-ts" tag
   let tsTag = GitHub.releaseTagName tsRelease
 
-  middlewareVersion <- getTSMiddlewareVersion tsTag
-  Data.Text.IO.putStrLn $ mconcat ["anytype-ts middleware.version: ", middlewareVersion]
-  let heartTag = "v" <> middlewareVersion
+  heartVersion <- getHeartVersion tsTag
+  Data.Text.IO.putStrLn $ mconcat ["anytype-ts middleware.version: ", heartVersion]
+  let heartTag = "v" <> heartVersion
   Data.Text.IO.putStrLn $ mconcat ["anytype-heart tag: ", heartTag]
+  heartGoMod <- getHeartGoMod heartTag
+  tantivyTag <- maybe (fail "Unable to find tantivy-go tag") pure $ getTantivyTag heartGoMod
+  Data.Text.IO.putStrLn $ mconcat ["tantivy-go tag: ", tantivyTag]
 
   updateGithubLockfile "anyproto" "anytype-ts" tsTag tsLockfilePath
   updateGithubLockfile "anyproto" "anytype-heart" heartTag heartLockfilePath
+  updateGithubLockfile "anyproto" "tantivy-go" tantivyTag tantivyLockfilePath

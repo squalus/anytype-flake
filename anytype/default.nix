@@ -1,15 +1,12 @@
 { anytype-ts-src, anytype-l10n-src, anytype-heart, anytype-protos-js, fix-lockfile
-, remove-telemetry-deps
-, lib, fetchFromGitHub, fetchurl, makeWrapper, buildNpmPackage, fetchNpmDeps
-, pkg-config, libsecret, electron_31, libglvnd, jq, moreutils, stdenvNoCC }:
+, remove-telemetry-deps , lib, buildNpmPackage , pkg-config, libsecret, electron_33
+, libglvnd, stdenvNoCC }:
 
 let
 
-  electron = electron_31;
+  electron = electron_33;
 
   pname = "anytype";
-
-  version = anytype-ts-src.version;
 
   npmDepsHash = builtins.fromJSON (builtins.readFile ./deps.json);
 
