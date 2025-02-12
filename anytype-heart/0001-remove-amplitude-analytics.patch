@@ -1,4 +1,4 @@
-From 7171dcae92f50e8d7a1a291a9907322416e2593a Mon Sep 17 00:00:00 2001
+From 166e2eb600ed29a31e7e5c1055a7231d7f41b3fa Mon Sep 17 00:00:00 2001
 From: squalus <squalus@squalus.net>
 Date: Sun, 29 Dec 2024 10:24:08 -0800
 Subject: [PATCH] remove amplitude analytics
@@ -35,17 +35,17 @@ index 8fd7709c3..85230a197 100644
  type SamplableEvent interface {
  	anymetry.Event
 diff --git a/pkg/lib/logging/gelf.go b/pkg/lib/logging/gelf.go
-index 661441fe2..431eda09a 100644
+index e699dbd06..4db881e7e 100644
 --- a/pkg/lib/logging/gelf.go
 +++ b/pkg/lib/logging/gelf.go
-@@ -29,6 +29,7 @@ var (
+@@ -30,6 +30,7 @@ var (
  )
  
  func registerGelfSink(config *logger.Config) {
 +	return
- 	gelfSinkWrapper.batch = mb.New(1000)
+ 	gelfSinkWrapper.batch = mb.New[gelf.Message](1000)
  	tlsWriter, err := gelf.NewTLSWriter(graylogHost, nil)
  	if err != nil {
 -- 
-2.47.0
+2.47.2
 

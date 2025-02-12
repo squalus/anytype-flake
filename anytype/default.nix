@@ -1,4 +1,4 @@
-{ anytype-ts-src, anytype-l10n-src, anytype-heart, anytype-protos-js, fix-lockfile
+{ anytype-ts-src, anytype-l10n-src, anytype-heart, anytype-protos-js, npm-lockfile-fix
 , remove-telemetry-deps , lib, buildNpmPackage , pkg-config, libsecret, electron_33
 , libglvnd, stdenvNoCC }:
 
@@ -22,7 +22,7 @@ let
       cp -r . $out
       ${remove-telemetry-deps}/bin/remove-telemetry-deps.py $out
       # this connects to the internet and fetches missing hashes
-      ${fix-lockfile}/bin/fix-lockfile.py $out/package-lock.json $out/package-lock.json
+      ${npm-lockfile-fix}/bin/npm-lockfile-fix $out/package-lock.json
     '';
     outputHash = hash;
     outputHashMode = "recursive";

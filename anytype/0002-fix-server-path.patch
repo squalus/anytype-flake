@@ -1,4 +1,4 @@
-From 53fd5f76ab4691049800d09ce92a8ec386d878f6 Mon Sep 17 00:00:00 2001
+From 106755d9dc55fe341d012288896ac3911288ee56 Mon Sep 17 00:00:00 2001
 From: squalus <squalus@squalus.net>
 Date: Mon, 29 Jan 2024 10:41:45 -0800
 Subject: [PATCH 2/2] fix server path
@@ -8,7 +8,7 @@ Subject: [PATCH 2/2] fix server path
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/electron.js b/electron.js
-index 04ae6096bd..d22b33f077 100644
+index ce26f56993..184db61c23 100644
 --- a/electron.js
 +++ b/electron.js
 @@ -8,7 +8,7 @@ const port = process.env.SERVER_PORT;
@@ -17,10 +17,10 @@ index 04ae6096bd..d22b33f077 100644
  const { installNativeMessagingHost } = require('./electron/js/lib/installNativeMessagingHost.js');
 -const binPath = fixPathForAsarUnpack(path.join(__dirname, 'dist', `anytypeHelper${is.windows ? '.exe' : ''}`));
 +const binPath = fixPathForAsarUnpack(path.join(__dirname.replace('app.asar', 'app.asar.unpacked'), 'dist', `anytypeHelper${is.windows ? '.exe' : ''}`));
- 
- // Fix notifications app name
- if (is.windows) {
-@@ -223,4 +223,4 @@ app.on('open-url', (e, url) => {
+ const Store = require('electron-store');
+ const suffix = app.isPackaged ? '' : 'dev';
+ const store = new Store({ name: [ 'localStorage', suffix ].join('-') });
+@@ -237,4 +237,4 @@ app.on('open-url', (e, url) => {
  		Util.send(mainWindow, 'route', Util.getRouteFromUrl(url));
  		mainWindow.show();
  	};
@@ -28,5 +28,5 @@ index 04ae6096bd..d22b33f077 100644
 \ No newline at end of file
 +});
 -- 
-2.47.0
+2.47.2
 
