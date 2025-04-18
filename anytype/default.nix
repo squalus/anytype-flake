@@ -1,10 +1,10 @@
 { anytype-ts-src, anytype-l10n-src, anytype-heart, anytype-protos-js, npm-lockfile-fix
-, remove-telemetry-deps , lib, buildNpmPackage , pkg-config, libsecret, electron_33
+, remove-telemetry-deps , lib, buildNpmPackage , pkg-config, libsecret, electron_34
 , libglvnd, stdenvNoCC }:
 
 let
 
-  electron = electron_33;
+  electron = electron_34;
 
   pname = "anytype";
 

@@ -14,12 +14,12 @@
       "attr_path": "anytype",
       "inputs": [ "anytype-l10n" ],
       "derived_hashes": [{
-        "attr_path": "anytype.depsUpdate",
-        "filename": "anytype/deps.json",
-        "run_mode": "always"
-      }, {
         "attr_path": "anytype.srcPatchedUpdate",
         "filename": "anytype/src-patched.json",
+        "run_mode": "always"
+      }, {
+        "attr_path": "anytype.depsUpdate",
+        "filename": "anytype/deps.json",
         "run_mode": "always"
       }, {
         "attr_path": "anytype-heart.vendorHashUpdate",
