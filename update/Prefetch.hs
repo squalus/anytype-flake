@@ -18,6 +18,7 @@ import Crypto.Hash.SHA256 qualified as SHA256
 import Data.Aeson qualified
 import Data.ByteString qualified
 import Data.ByteString.Base64 qualified
+import Data.Base64.Types qualified
 import Data.Map qualified
 import Data.Text qualified
 import GitHub qualified
@@ -57,7 +58,7 @@ prefetchGithubReleaseAsset asset = do
           maybeMD5Header = listToMaybe (mapMaybe (\(name, value) -> if name == md5HeaderName then Just value else Nothing) headers)
       md5BS <- case maybeMD5Header of
         Nothing -> fail "MD5 header not found"
-        Just x -> case Data.ByteString.Base64.decodeBase64 x of
+        Just x -> case Data.ByteString.Base64.decodeBase64Untyped x of
           Left err -> fail (mconcat ["Error decoding MD5 header: ", Data.Text.unpack err])
           Right decoded -> pure decoded
       yield (ResponseDataMD5 md5BS)
@@ -108,7 +109,7 @@ sha256Sink' expectedSize expectedMD5 actualSize md5Ctx sha256Ctx =
     Just bs -> sha256Sink' expectedSize expectedMD5 (actualSize + Data.ByteString.length bs) (MD5.update md5Ctx bs) (SHA256.update sha256Ctx bs)
 
 encodeSha256 :: ByteString -> Text
-encodeSha256 bs = "sha256-" <> Data.ByteString.Base64.encodeBase64 bs
+encodeSha256 bs = "sha256-" <> (Data.Base64.Types.extractBase64 . Data.ByteString.Base64.encodeBase64) bs
 
 md5HeaderName :: Network.HTTP.Types.Header.HeaderName
 md5HeaderName = "Content-MD5"

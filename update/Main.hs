@@ -2,7 +2,7 @@ module Main where
 
 import Control.Exception
 import Data.Text (Text)
-import Data.Text.Encoding.Base64 (decodeBase64)
+import Data.Text.Encoding.Base64 (decodeBase64Untyped)
 import Data.Vector (Vector)
 import GHC.Generics
 import GitHub (github')
@@ -112,7 +112,7 @@ getHeartVersion tsTag = do
     GitHub.ContentFile cfd -> pure cfd
     _ -> fail "Unexpected content type of middleware.version"
   let middlewareVersionContentText = (Data.Text.strip . GitHub.contentFileContent) middlewareVersionContentFile
-  case decodeBase64 middlewareVersionContentText of
+  case decodeBase64Untyped middlewareVersionContentText of
     Left x -> fail ("Error in base64 decode of middleware.version file" <> Data.Text.unpack x)
     Right x -> pure x
 
@@ -127,7 +127,7 @@ getHeartGoMod heartTag = do
     _ -> fail "Unexpected content type of go.mod"
   let goModContentText = (Data.Text.strip . GitHub.contentFileContent) goModContentFile
       joined = mconcat . Data.Text.lines $ goModContentText
-  case decodeBase64 joined of
+  case decodeBase64Untyped joined of
     Left x -> fail ("Error in base64 decode of anytype-heart go.mod file" <> Data.Text.unpack x)
     Right x -> pure x
 

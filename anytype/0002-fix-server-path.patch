@@ -1,14 +1,14 @@
-From 66b8701ded1c805494f31f123e0975c80dd571cd Mon Sep 17 00:00:00 2001
+From 11d027b6330bbebcb1e94640c0266a3b6e4b2142 Mon Sep 17 00:00:00 2001
 From: squalus <squalus@squalus.net>
 Date: Mon, 29 Jan 2024 10:41:45 -0800
 Subject: [PATCH 2/2] fix server path
 
 ---
- electron.js | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ electron.js | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/electron.js b/electron.js
-index d70f20f271..2e31a1ccc5 100644
+index c5d6760882..dd3c28c412 100644
 --- a/electron.js
 +++ b/electron.js
 @@ -8,7 +8,7 @@ const port = process.env.SERVER_PORT;
@@ -20,13 +20,6 @@ index d70f20f271..2e31a1ccc5 100644
  const Store = require('electron-store');
  const suffix = app.isPackaged ? '' : 'dev';
  const store = new Store({ name: [ 'localStorage', suffix ].join('-') });
-@@ -238,4 +238,4 @@ app.on('open-url', (e, url) => {
- 		Util.send(mainWindow, 'route', Util.getRouteFromUrl(url));
- 		mainWindow.show();
- 	};
--});
-\ No newline at end of file
-+});
 -- 
-2.47.2
+2.49.0
 

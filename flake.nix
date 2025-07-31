@@ -3,8 +3,7 @@
   description = "Anytype";
 
   inputs = {
-    # e493a167e1e is the first bad commit, produces segfault
-    nixpkgs.url = "github:NixOS/nixpkgs?rev=270d0e770b950b659d271f590793657fe3c1320c";
+    nixpkgs.url = "github:NixOS/nixpkgs";
 
     systems.url = "github:nix-systems/default-linux";
     flake-utils = {
