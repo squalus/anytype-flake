@@ -85,8 +85,9 @@ isTSReleaseStable release =
     isVersion = Data.Text.isPrefixOf "v" tagName
     isAlpha = Data.Text.isSuffixOf "-alpha" tagName
     isBeta = Data.Text.isSuffixOf "-beta" tagName
+    isWindows = Data.Text.isSuffixOf "-windowsjob" tagName
   in
-    isVersion && not isAlpha && not isBeta
+    isVersion && not isAlpha && not isBeta && not isWindows
 
 getLatestRelease :: Text -> Text -> IO (Maybe GitHub.Release)
 getLatestRelease owner repo = do

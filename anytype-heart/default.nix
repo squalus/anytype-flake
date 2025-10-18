@@ -37,5 +37,5 @@ let
 in
 
 (pkg vendorHash).overrideAttrs (old: {
-  passthru.vendorHashUpdate = (pkg lib.fakeHash).goModules;
+  passthru = (pkg vendorHash).passthru // { vendorHashUpdate = (pkg lib.fakeHash).goModules; };
 })
