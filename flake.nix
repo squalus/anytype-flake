@@ -53,7 +53,7 @@
 
         default = anytype;
 
-        anytype-test = nixosTest (import ./anytype/test.nix { inherit self; });
+        anytype-test = testers.nixosTest (import ./anytype/test.nix { inherit self; });
 
         anytype-flake-update = haskellPackages.callPackage ./update {};
 
