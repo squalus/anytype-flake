@@ -1,4 +1,4 @@
-From 166e2eb600ed29a31e7e5c1055a7231d7f41b3fa Mon Sep 17 00:00:00 2001
+From 7a1347bb5466cc88dccdb52642dac23183627a27 Mon Sep 17 00:00:00 2001
 From: squalus <squalus@squalus.net>
 Date: Sun, 29 Dec 2024 10:24:08 -0800
 Subject: [PATCH] remove amplitude analytics
@@ -22,10 +22,10 @@ index 09cf2943a..ba99cfcea 100644
  		return nil
  	}
 diff --git a/metrics/service.go b/metrics/service.go
-index 8fd7709c3..85230a197 100644
+index 2841a9935..db29acf25 100644
 --- a/metrics/service.go
 +++ b/metrics/service.go
-@@ -27,7 +27,7 @@ const (
+@@ -28,7 +28,7 @@ const (
  	inhouse anymetry.MetricsBackend = iota
  )
  
@@ -47,5 +47,5 @@ index e699dbd06..4db881e7e 100644
  	tlsWriter, err := gelf.NewTLSWriter(graylogHost, nil)
  	if err != nil {
 -- 
-2.47.2
+2.50.1
 

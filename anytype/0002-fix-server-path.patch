@@ -1,4 +1,4 @@
-From c2946a2206d599e7d85075b1cb854b3e825c9e2e Mon Sep 17 00:00:00 2001
+From 620009374759144f85c60d80a6e2c6e76d52f676 Mon Sep 17 00:00:00 2001
 From: squalus <squalus@squalus.net>
 Date: Mon, 29 Jan 2024 10:41:45 -0800
 Subject: [PATCH 2/2] fix server path
@@ -8,10 +8,10 @@ Subject: [PATCH 2/2] fix server path
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/electron.js b/electron.js
-index c104b973e7..233f13b63f 100644
+index 9f58f11d70..fc9b0396a1 100644
 --- a/electron.js
 +++ b/electron.js
-@@ -8,7 +8,7 @@ const port = process.env.SERVER_PORT;
+@@ -7,7 +7,7 @@ const storage = require('electron-json-storage');
  const protocol = 'anytype';
  const remote = require('@electron/remote/main');
  const { installNativeMessagingHost } = require('./electron/js/lib/installNativeMessagingHost.js');

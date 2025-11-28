@@ -29,7 +29,9 @@
     with pkgs;
 
     let
-      remove-telemetry-deps = callPackage ./remove-telemetry-deps {};
+      bazelPackage = callPackage "${nixpkgs}/pkgs/by-name/ba/bazel_8/build-support/bazelPackage.nix" {};
+      protoc-gen-js = callPackage ./protoc-gen-js { inherit bazelPackage; };
+      remove-telemetry-deps = callPackage ./remove-telemetry-deps { };
       anytype-ts-src = callPackage ./anytype/src.nix { };
       libtantivy-go-src = callPackage ./libtantivy-go/src.nix { };
       libtantivy-go = callPackage ./libtantivy-go { inherit libtantivy-go-src; };
@@ -56,6 +58,8 @@
         anytype-test = testers.nixosTest (import ./anytype/test.nix { inherit self; });
 
         anytype-flake-update = haskellPackages.callPackage ./update {};
+
+        inherit (pkgs) electron_37;
 
       };
       checks = flake-utils.lib.flattenTree {
